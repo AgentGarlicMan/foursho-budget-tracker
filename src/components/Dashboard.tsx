@@ -124,7 +124,7 @@ export function Dashboard({
           </section>
 
           <section aria-label="Contributions chart" className="lg:col-span-2">
-            <ContributionChart contributions={state.contributions} />
+            <ContributionChart contributions={state.contributions} theme={theme} />
           </section>
 
           <section aria-label="Contributions section" className="flex flex-col gap-6">

@@ -13,9 +13,12 @@ import { formatCurrency } from '../utils/formatCurrency';
 
 interface ContributionChartProps {
   contributions: Contribution[];
+  theme?: 'light' | 'dark';
 }
 
-export function ContributionChart({ contributions }: ContributionChartProps) {
+export function ContributionChart({ contributions, theme = 'light' }: ContributionChartProps) {
+  const isDark = theme === 'dark';
+
   const chartData = MEMBERS.map((member) => {
     const total = contributions
       .filter((c) => c.memberName === member)
@@ -33,6 +36,12 @@ export function ContributionChart({ contributions }: ContributionChartProps) {
     };
   });
 
+  const gridStroke = isDark ? '#374151' : '#e5e7eb';
+  const tickFill = isDark ? '#d1d5db' : '#4b5563';
+  const tooltipBg = isDark ? '#1f2937' : '#ffffff';
+  const tooltipBorder = isDark ? '#374151' : '#e5e7eb';
+  const tooltipText = isDark ? '#f3f4f6' : '#111827';
+
   return (
     <section aria-label="Contribution Chart" className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
       <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-4">
@@ -41,10 +50,19 @@ export function ContributionChart({ contributions }: ContributionChartProps) {
       <div className="w-full h-48 sm:h-64 lg:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} />
-            <Tooltip formatter={(value: number) => [formatCurrency(value), 'Total']} />
+            <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
+            <XAxis dataKey="name" tick={{ fontSize: 12, fill: tickFill }} />
+            <YAxis tick={{ fontSize: 12, fill: tickFill }} />
+            <Tooltip
+              formatter={(value: number) => [formatCurrency(value), 'Total']}
+              contentStyle={{
+                backgroundColor: tooltipBg,
+                borderColor: tooltipBorder,
+                borderRadius: '0.5rem',
+                color: tooltipText,
+              }}
+              labelStyle={{ color: tooltipText }}
+            />
             <Bar dataKey="total" fill="#3b82f6" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
