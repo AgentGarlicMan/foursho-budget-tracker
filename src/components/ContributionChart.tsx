@@ -9,6 +9,7 @@ import {
 } from 'recharts';
 import { Contribution } from '../types';
 import { MEMBERS } from '../constants';
+import { formatCurrency } from '../utils/formatCurrency';
 
 interface ContributionChartProps {
   contributions: Contribution[];
@@ -33,8 +34,8 @@ export function ContributionChart({ contributions }: ContributionChartProps) {
   });
 
   return (
-    <section aria-label="Contribution Chart" className="bg-white rounded-xl shadow-md p-4 sm:p-6">
-      <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-4">
+    <section aria-label="Contribution Chart" className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
+      <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-4">
         Contributions by Member
       </h2>
       <div className="w-full h-48 sm:h-64 lg:h-72">
@@ -43,7 +44,7 @@ export function ContributionChart({ contributions }: ContributionChartProps) {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" tick={{ fontSize: 12 }} />
             <YAxis tick={{ fontSize: 12 }} />
-            <Tooltip formatter={(value: number) => [`$${value.toFixed(2)}`, 'Total']} />
+            <Tooltip formatter={(value: number) => [formatCurrency(value), 'Total']} />
             <Bar dataKey="total" fill="#3b82f6" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
@@ -52,18 +53,18 @@ export function ContributionChart({ contributions }: ContributionChartProps) {
         {recentContributions.map(({ name, latest }) => (
           <div
             key={name}
-            className="bg-gray-50 rounded-lg p-2 sm:p-3 text-center"
+            className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 sm:p-3 text-center"
           >
-            <p className="text-xs font-medium text-gray-600">{name}</p>
+            <p className="text-xs font-medium text-gray-600 dark:text-gray-300">{name}</p>
             {latest ? (
               <>
-                <p className="text-sm font-bold text-blue-600">
-                  ${latest.amount.toFixed(2)}
+                <p className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                  {formatCurrency(latest.amount)}
                 </p>
-                <p className="text-xs text-gray-500">{latest.date}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{latest.date}</p>
               </>
             ) : (
-              <p className="text-xs text-gray-400">No contributions</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">No contributions</p>
             )}
           </div>
         ))}
