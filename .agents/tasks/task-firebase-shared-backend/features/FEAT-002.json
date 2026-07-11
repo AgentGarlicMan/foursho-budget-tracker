@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Add loading and error UI components with responsive Tailwind styling, and implement localStorage-to-Firebase data migration on first load.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create src/components/LoadingScreen.tsx - a full-page loading indicator that displays while Firebase data is being fetched. Use semantic HTML (main element), Tailwind responsive classes, a spinner animation, and text indicating data is loading. Support dark mode.",
     "Create src/components/ErrorScreen.tsx - a full-page error display shown when Firebase connection fails. Include the error message, a retry button that reloads the page, and a note that the app will use cached data if available. Use semantic HTML, responsive Tailwind classes, dark mode support.",
