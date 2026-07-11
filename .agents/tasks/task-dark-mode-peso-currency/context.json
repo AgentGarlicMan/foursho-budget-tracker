@@ -1,0 +1,33 @@
+{
+  "project_type": "React + TypeScript + Vite budget tracker SPA with Tailwind CSS v4",
+  "language": "TypeScript / TSX",
+  "build_system": "Vite with @tailwindcss/vite plugin; bun as package manager (npm/node not available)",
+  "test_framework": "No test framework configured",
+  "build_command": "bunx tsc -b && bunx vite build",
+  "test_command": "No test command available - validate via TypeScript compilation and Vite build",
+  "verification_instructions": "1. Run 'bunx tsc -b' to verify TypeScript compiles without errors. 2. Run 'bunx vite build' to verify Vite builds successfully.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "Run 'bun install' to install dependencies",
+  "environment_constraints": "Node.js/npm not available. Use 'bun' for package management and 'bunx' for running scripts. Network is OPEN_INTERNET.",
+  "contribution_requirements": "No CONTRIBUTING.md. Follow existing patterns in the codebase.",
+  "key_patterns": "Components use functional React with hooks. State is managed via useState and a custom useLocalStorage hook. Tailwind CSS v4 via @tailwindcss/vite plugin (no tailwind.config.js). All components use semantic HTML (section, header, footer, main, nav, article, fieldset, legend). Currency is currently formatted with '$' + .toFixed(2) inline in components. Tailwind dark mode works via 'dark:' variant when 'dark' class is on <html>. index.css has only '@import tailwindcss'. The app has a RoleSelection login screen and a Dashboard with contributions/expenses/charts.",
+  "relevant_files": [
+    "src/index.css",
+    "src/App.tsx",
+    "src/main.tsx",
+    "src/constants.ts",
+    "src/types.ts",
+    "src/hooks/useLocalStorage.ts",
+    "src/components/Dashboard.tsx",
+    "src/components/BudgetSummary.tsx",
+    "src/components/ContributionChart.tsx",
+    "src/components/ContributionForm.tsx",
+    "src/components/ContributionList.tsx",
+    "src/components/ExpenseForm.tsx",
+    "src/components/ExpenseList.tsx",
+    "src/components/ResetData.tsx",
+    "src/components/RoleSelection.tsx",
+    "index.html"
+  ],
+  "directory_structure": "Root: index.html, package.json, vite.config.ts, tsconfig*.json. src/: main.tsx (entry), App.tsx (router), index.css, constants.ts, types.ts. src/hooks/: useLocalStorage.ts. src/components/: all UI components (Dashboard, BudgetSummary, ContributionChart, ContributionForm, ContributionList, ExpenseForm, ExpenseList, ResetData, RoleSelection)."
+}

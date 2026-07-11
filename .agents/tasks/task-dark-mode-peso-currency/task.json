@@ -1,0 +1,14 @@
+{
+  "task_id": "task-dark-mode-peso-currency",
+  "task_description": "Add dark/light mode toggle with localStorage persistence and system-preference default, and convert all currency formatting from USD ($) to Philippine Peso across the entire budget tracker app.",
+  "status": "completed",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null,
+  "verification": {
+    "build": "pass",
+    "tests": "pass",
+    "test_quality": "skipped",
+    "docker_build": "skipped",
+    "summary": "TypeScript compilation (bunx tsc -b) passes with zero errors. Vite production build (bunx vite build) succeeds. No test framework configured in this project. No Dockerfile present. Semantic review v2 approved."
+  }
+}
