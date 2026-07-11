@@ -1,6 +1,15 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase } from 'firebase/database';
 
+// SECURITY NOTE: This app currently has no authentication layer.
+// The Firebase Realtime Database security rules must be configured on the
+// Firebase console to restrict access. For production use, you should:
+//   1. Enable Firebase Authentication (even anonymous auth adds a layer)
+//   2. Set database rules to restrict reads/writes to authenticated users, e.g.:
+//      { "rules": { ".read": "auth != null", ".write": "auth != null" } }
+//   3. Consider per-user data isolation at /users/$uid/appState
+// Without proper rules, anyone with the databaseURL can read/write all data.
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyDEMO_PLACEHOLDER_KEY',
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'demo-project.firebaseapp.com',

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ref, onValue, set } from 'firebase/database';
+import { ref, onValue, set, runTransaction } from 'firebase/database';
 import { database } from '../firebase';
 import { AppState } from '../types';
 import { STORAGE_KEY } from '../constants';
@@ -62,7 +62,8 @@ export function useFirebaseState() {
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const isWriting = useRef(false);
+  // Track the number of pending writes to avoid applying echoes from onValue
+  const pendingWrites = useRef(0);
   const hasReceivedData = useRef(false);
 
   useEffect(() => {
@@ -84,29 +85,42 @@ export function useFirebaseState() {
         hasReceivedData.current = true;
         clearTimeout(timeoutId);
 
-        if (isWriting.current) {
+        // If there are pending writes, ignore echoes from the server
+        if (pendingWrites.current > 0) {
           return;
         }
 
         const data = snapshot.val();
 
         // Migration logic: if Firebase is empty but localStorage has data, migrate
+        // Uses a transaction to prevent race conditions between concurrent clients
         if (isEmptyState(data) && !hasMigrated()) {
           const localData = getLocalStorageState();
           if (localData && !isEmptyState(localData)) {
-            // Push localStorage data to Firebase
-            isWriting.current = true;
-            set(dbRef, localData)
-              .then(() => {
+            // Use a transaction to ensure only one client migrates
+            pendingWrites.current++;
+            runTransaction(dbRef, (currentData) => {
+              // Only write if the server data is still empty
+              if (isEmptyState(currentData)) {
+                return localData;
+              }
+              // Another client already migrated; abort by returning undefined
+              return undefined;
+            })
+              .then((result) => {
                 markMigrated();
-                setLocalState(localData);
-                saveToLocalStorage(localData);
+                if (result.committed) {
+                  setLocalState(localData);
+                  saveToLocalStorage(localData);
+                }
+                // If not committed, another client won the race.
+                // The onValue listener will pick up their data.
               })
               .catch((err) => {
                 console.error('Migration failed:', err.message);
               })
               .finally(() => {
-                isWriting.current = false;
+                pendingWrites.current--;
               });
             setLoading(false);
             setError(null);
@@ -153,19 +167,24 @@ export function useFirebaseState() {
         const newState =
           typeof action === 'function' ? action(prev) : action;
 
-        // Write to Firebase and localStorage
-        isWriting.current = true;
-        const dbRef = ref(database, '/appState');
-        set(dbRef, newState)
-          .catch((err) => {
-            console.error('Firebase write error:', err.message);
-            setError(err.message);
-          })
-          .finally(() => {
-            isWriting.current = false;
-          });
-
+        // Persist to localStorage synchronously (safe side-effect for cache)
         saveToLocalStorage(newState);
+
+        // Schedule Firebase write outside of the state updater via microtask
+        // to avoid a side-effect inside a React state updater function
+        pendingWrites.current++;
+        const dbRef = ref(database, '/appState');
+        Promise.resolve().then(() => {
+          set(dbRef, newState)
+            .catch((err) => {
+              console.error('Firebase write error:', err.message);
+              setError(err.message);
+            })
+            .finally(() => {
+              pendingWrites.current--;
+            });
+        });
+
         return newState;
       });
     },
@@ -173,7 +192,7 @@ export function useFirebaseState() {
   );
 
   const resetState = useCallback(() => {
-    isWriting.current = true;
+    pendingWrites.current++;
     const dbRef = ref(database, '/appState');
     set(dbRef, defaultState)
       .catch((err) => {
@@ -181,7 +200,7 @@ export function useFirebaseState() {
         setError(err.message);
       })
       .finally(() => {
-        isWriting.current = false;
+        pendingWrites.current--;
       });
 
     setLocalState(defaultState);
