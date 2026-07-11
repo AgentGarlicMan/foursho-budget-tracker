@@ -1,0 +1,44 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Add dark/light mode toggle with persistence and system-preference detection, plus convert all currency formatting from $ to Philippine Peso. This is a single cohesive feature that touches all components.",
+  "status": "completed",
+  "steps": [
+    "Create a shared currency formatting utility at src/utils/formatCurrency.ts that exports a function formatCurrency(amount: number): string returning the amount formatted as Philippine Peso with the symbol and 2 decimal places (e.g., '₱1,500.00'). Use Intl.NumberFormat or manual formatting.",
+    "Create a ThemeToggle component at src/components/ThemeToggle.tsx that renders a button with sun/moon icons (inline SVG) to toggle between light and dark mode. It should accept theme and onToggle props.",
+    "Create a useTheme hook at src/hooks/useTheme.ts that: (a) reads theme from localStorage key 'capstone-budget-tracker-theme', (b) defaults to system preference via window.matchMedia('(prefers-color-scheme: dark)') if no stored value, (c) falls back to 'light' if system preference unavailable, (d) adds/removes 'dark' class on document.documentElement, (e) persists changes to localStorage, (f) returns { theme, toggleTheme }.",
+    "Update index.html: no changes needed since dark class will be added via JS on <html>.",
+    "Update src/index.css: add a @custom-variant for dark mode ('&:where(.dark *)') if needed for Tailwind v4, and add CSS custom properties for theme colors if desired. At minimum ensure Tailwind dark: variant works with the class strategy.",
+    "Update src/App.tsx: import and use the useTheme hook, pass theme and toggleTheme down to Dashboard and also make theme available on RoleSelection.",
+    "Update src/components/Dashboard.tsx: (a) Accept theme and toggleTheme props, (b) add ThemeToggle button in the header next to Switch User, (c) update all hardcoded bg-white, bg-gray-50, text-gray-800, border-gray-200 etc. to include dark: variants (dark:bg-gray-900, dark:bg-gray-800, dark:text-white, dark:border-gray-700, etc.).",
+    "Update src/components/RoleSelection.tsx: (a) Accept theme and toggleTheme props, (b) add ThemeToggle in the top-right corner, (c) add dark: variants to all Tailwind classes (bg-gray-50 -> dark:bg-gray-900, bg-white -> dark:bg-gray-800, text-gray-800 -> dark:text-white, border-gray-300 -> dark:border-gray-600, etc.).",
+    "Update src/components/BudgetSummary.tsx: (a) Replace all inline '$' + .toFixed(2) with the formatCurrency utility, (b) add dark: Tailwind variants to all color classes.",
+    "Update src/components/ContributionList.tsx: (a) Replace '$' + .toFixed(2) with formatCurrency, (b) add dark: variants to all Tailwind classes.",
+    "Update src/components/ContributionChart.tsx: (a) Replace '$' tooltip formatter with formatCurrency, (b) Replace '$' in the recent contributions cards with formatCurrency, (c) add dark: variants to all Tailwind classes, (d) optionally adjust chart colors for dark mode readability.",
+    "Update src/components/ContributionForm.tsx: (a) Change label 'Amount ($)' to 'Amount (₱)', (b) add dark: variants to all Tailwind classes.",
+    "Update src/components/ExpenseList.tsx: (a) Replace '$' + .toFixed(2) with formatCurrency, (b) add dark: variants to all Tailwind classes.",
+    "Update src/components/ExpenseForm.tsx: (a) Change label 'Cost ($)' to 'Cost (₱)', (b) add dark: variants to all Tailwind classes.",
+    "Update src/components/ResetData.tsx: add dark: variants to all Tailwind classes.",
+    "Verify build: run 'bunx tsc -b && bunx vite build' to ensure no TypeScript or build errors."
+  ],
+  "acceptance_criteria": [
+    "A theme toggle button is visible in the Dashboard header and on the RoleSelection screen",
+    "Clicking the toggle switches between light and dark themes - dark class is toggled on <html>",
+    "All UI elements have dark: variant classes so no unstyled/broken elements appear in dark mode",
+    "Theme preference persists in localStorage under key 'capstone-budget-tracker-theme'",
+    "If no stored theme, the app uses the user's system preference (prefers-color-scheme)",
+    "All monetary values use formatCurrency utility displaying the peso symbol (e.g., ₱1,500.00)",
+    "No hardcoded $ symbols remain in any component for currency display",
+    "Form labels reference peso: 'Amount (₱)' and 'Cost (₱)'",
+    "Chart tooltip uses peso formatting",
+    "TypeScript compiles without errors (bunx tsc -b)",
+    "Vite build succeeds (bunx vite build)"
+  ],
+  "verification": [
+    "Run 'bunx tsc -b' and confirm zero errors",
+    "Run 'bunx vite build' and confirm successful build",
+    "Grep for remaining '$' currency symbols in components to confirm none remain: grep -rn '\\$' src/components/ should not show dollar-sign currency formatting"
+  ],
+  "blocked_reason": null,
+  "findings": "All implementations completed successfully. TypeScript compilation and Vite build both pass with zero errors. No remaining hardcoded $ currency symbols in components. Used HTML entity &#8369; for the peso symbol in form labels to avoid any encoding issues. The Vite build shows a chunk size warning (604KB) due to recharts but this is pre-existing and unrelated to our changes. Post-review fixes applied: (1) ContributionChart now accepts a theme prop and styles CartesianGrid stroke, XAxis/YAxis tick fill, and Tooltip contentStyle/labelStyle for dark mode. (2) useTheme hook now adds a matchMedia change event listener for live system preference detection, cleaned up on unmount."
+}

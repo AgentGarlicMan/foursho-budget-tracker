@@ -7,6 +7,7 @@ import { ContributionChart } from './ContributionChart';
 import { ExpenseForm } from './ExpenseForm';
 import { ExpenseList } from './ExpenseList';
 import { ResetData } from './ResetData';
+import { ThemeToggle } from './ThemeToggle';
 
 interface DashboardProps {
   state: AppState;
@@ -15,6 +16,8 @@ interface DashboardProps {
   role: Role;
   memberName: string;
   onLogout: () => void;
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
 }
 
 export function Dashboard({
@@ -24,6 +27,8 @@ export function Dashboard({
   role,
   memberName,
   onLogout,
+  theme,
+  toggleTheme,
 }: DashboardProps) {
   const [editingContribution, setEditingContribution] =
     useState<Contribution | null>(null);
@@ -82,25 +87,26 @@ export function Dashboard({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
               Capstone Group Budget Tracker
             </h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Logged in as{' '}
               <span className="font-semibold">{memberName}</span>
-              <span className="ml-1 text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+              <span className="ml-1 text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200">
                 {role === 'leader' ? 'Leader' : 'Viewer'}
               </span>
             </p>
           </div>
-          <nav>
+          <nav className="flex items-center gap-2">
+            <ThemeToggle theme={theme} onToggle={toggleTheme} />
             <button
               onClick={onLogout}
-              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
             >
               Switch User
             </button>
@@ -118,7 +124,7 @@ export function Dashboard({
           </section>
 
           <section aria-label="Contributions chart" className="lg:col-span-2">
-            <ContributionChart contributions={state.contributions} />
+            <ContributionChart contributions={state.contributions} theme={theme} />
           </section>
 
           <section aria-label="Contributions section" className="flex flex-col gap-6">
@@ -161,8 +167,8 @@ export function Dashboard({
         </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-200 mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm text-gray-500">
+      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
           Capstone Group Budget Tracker - Built with React, TypeScript, and Tailwind CSS
         </div>
       </footer>
