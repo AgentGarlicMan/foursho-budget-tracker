@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Add loading and error UI components with responsive Tailwind styling, and implement localStorage-to-Firebase data migration on first load.",
+  "status": "completed",
+  "steps": [
+    "Create src/components/LoadingScreen.tsx - a full-page loading indicator that displays while Firebase data is being fetched. Use semantic HTML (main element), Tailwind responsive classes, a spinner animation, and text indicating data is loading. Support dark mode.",
+    "Create src/components/ErrorScreen.tsx - a full-page error display shown when Firebase connection fails. Include the error message, a retry button that reloads the page, and a note that the app will use cached data if available. Use semantic HTML, responsive Tailwind classes, dark mode support.",
+    "Update src/App.tsx to use LoadingScreen and ErrorScreen components instead of inline JSX for loading/error states.",
+    "In src/hooks/useFirebaseState.ts, add migration logic: on first load, check if localStorage has existing data (using the STORAGE_KEY from constants.ts). If Firebase returns empty/null data but localStorage has data, automatically push the localStorage data to Firebase (one-time migration). After successful migration, mark it complete (e.g., set a localStorage flag 'firebase-migrated' to true) so it does not repeat.",
+    "Ensure the loading state is brief - if Firebase responds within a normal timeframe, the loading screen should flash briefly then show data. If Firebase times out (after ~10 seconds), show the error screen with the localStorage fallback data displayed.",
+    "Verify npm run build still passes cleanly."
+  ],
+  "acceptance_criteria": [
+    "LoadingScreen component renders a centered spinner with descriptive text",
+    "ErrorScreen component renders an error message with a retry button",
+    "Both components use semantic HTML elements and responsive Tailwind classes",
+    "Both components support dark mode via the existing dark: variant pattern",
+    "Migration logic detects existing localStorage data and pushes it to Firebase on first use",
+    "Migration only runs once (tracked via a localStorage flag)",
+    "If Firebase is unreachable, the app still functions using localStorage cached data after showing the error",
+    "npm run build passes with no errors"
+  ],
+  "verification": [
+    "Run: cd /projects/sandbox/foursho-budget-tracker && npm run build",
+    "Confirm the build output shows no errors",
+    "Confirm src/components/LoadingScreen.tsx and src/components/ErrorScreen.tsx exist"
+  ],
+  "blocked_reason": null,
+  "findings": "Build passes cleanly. Used bunx instead of npm for build. The useFirebaseState hook now includes: (1) a 10-second timeout that triggers the error screen with localStorage fallback, (2) migration logic that detects empty Firebase + existing localStorage data and pushes it to Firebase one time only (tracked via 'firebase-migrated' localStorage flag). LoadingScreen and ErrorScreen components use semantic HTML (main/section elements), responsive Tailwind classes (sm:/lg: breakpoints), and dark mode support."
+}

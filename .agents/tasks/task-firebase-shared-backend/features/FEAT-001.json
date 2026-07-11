@@ -1,0 +1,37 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Install Firebase SDK, create Firebase configuration, and implement a useFirebaseState hook that replaces useLocalStorage as the primary data store. Wire it into App.tsx with loading/error states in the Dashboard.",
+  "status": "completed",
+  "steps": [
+    "Install the firebase npm package: npm install firebase",
+    "Create src/firebase.ts - Firebase configuration and initialization file. Use environment variables (import.meta.env.VITE_FIREBASE_*) for config values, with hardcoded fallback values for a pre-configured Firebase project. Initialize the Firebase app and export the database reference. Use Firebase Realtime Database (not Firestore) for simplicity.",
+    "Create src/hooks/useFirebaseState.ts - a new hook that mirrors the API of useLocalStorage (returns { state, setState, resetState }) but also returns { loading: boolean, error: string | null }. On mount, it reads data from Firebase Realtime Database path '/appState'. On state changes from the admin, it writes to Firebase. It should use onValue listener to get initial data and keep state in sync. The setState function should write to Firebase and update local state. Include localStorage as a fallback cache - write to both Firebase and localStorage, but prefer Firebase data on load.",
+    "Update src/types.ts - add a DataStatus type or extend the existing types to include loading/error state if needed, or handle this purely in the hook return type.",
+    "Update src/App.tsx - replace useLocalStorage() with useFirebaseState(). Handle the loading and error states before rendering Dashboard. Show a loading spinner/indicator when loading is true. Show an error message with retry option when error is non-null.",
+    "Update src/components/Dashboard.tsx - no changes needed to the Dashboard props interface since setState and resetState will maintain the same signature. The hook handles the Firebase sync internally.",
+    "Create a .env.example file documenting the required Firebase environment variables: VITE_FIREBASE_API_KEY, VITE_FIREBASE_AUTH_DOMAIN, VITE_FIREBASE_DATABASE_URL, VITE_FIREBASE_PROJECT_ID, VITE_FIREBASE_STORAGE_BUCKET, VITE_FIREBASE_MESSAGING_SENDER_ID, VITE_FIREBASE_APP_ID.",
+    "Create a .env file with placeholder/demo Firebase config values so the app can build without errors. Use a free-tier Firebase project configuration or clearly marked placeholder values that indicate they need to be replaced.",
+    "Update .gitignore to ensure .env is not committed (add .env if not already present).",
+    "Ensure npm run build passes with no TypeScript errors."
+  ],
+  "acceptance_criteria": [
+    "npm install succeeds with firebase package added to dependencies in package.json",
+    "npm run build passes with zero TypeScript errors",
+    "src/firebase.ts exports a configured Firebase database reference",
+    "src/hooks/useFirebaseState.ts exports a hook returning { state, setState, resetState, loading, error }",
+    "App.tsx uses the new hook and displays a loading indicator while fetching",
+    "App.tsx displays an error message if Firebase connection fails",
+    "The setState function writes to Firebase Realtime Database at /appState path",
+    "The hook falls back to localStorage data if Firebase is unreachable",
+    ".env.example documents all required environment variables",
+    ".gitignore includes .env"
+  ],
+  "verification": [
+    "Run: cd /projects/sandbox/foursho-budget-tracker && npm install && npm run build",
+    "Confirm the build output shows no errors",
+    "Confirm firebase is listed in package.json dependencies"
+  ],
+  "blocked_reason": null,
+  "findings": "Firebase SDK v12.16.0 installed. Build passes cleanly (tsc + vite build). Node.js v20.20.2 available via /opt/toolchains/.nvm/versions/node/v20.20.2/bin path prefix. The bundle is >500KB due to Firebase SDK but this is expected. The .env file is created with placeholder values and is gitignored. PATH must be set to include nvm node before running npm commands."
+}

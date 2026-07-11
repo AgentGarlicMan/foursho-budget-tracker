@@ -1,0 +1,27 @@
+{
+  "project_type": "React + TypeScript + Vite budget tracker SPA",
+  "language": "TypeScript",
+  "build_system": "Vite with @vitejs/plugin-react and @tailwindcss/vite. Build: tsc -b && vite build",
+  "test_framework": "No test framework configured. No test files exist.",
+  "build_command": "npm run build",
+  "test_command": "No test command available (no test framework). Verify via npm run build (TypeScript compilation + Vite bundle).",
+  "verification_instructions": "1. Run npm install to install deps. 2. Run npm run build to confirm TypeScript compiles cleanly and Vite bundles. 3. Verify no type errors in the new Firebase code.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "cd /projects/sandbox/foursho-budget-tracker && npm install",
+  "environment_constraints": "OPEN_INTERNET - full npm access. No Docker needed. No test runner.",
+  "contribution_requirements": "No CONTRIBUTING.md. Follow existing patterns: functional components, hooks, Tailwind CSS v4 with dark mode, responsive design, semantic HTML.",
+  "key_patterns": "State management via custom hooks (useLocalStorage, useTheme). AppState interface holds contributions[] and expenses[]. Dashboard receives state/setState/resetState as props. All CRUD done via setState updater functions in Dashboard. Role-based UI (leader can write, viewer is read-only). Tailwind v4 with @import 'tailwindcss' and @custom-variant dark. TypeScript strict mode with noUnusedLocals/noUnusedParameters.",
+  "relevant_files": [
+    "src/hooks/useLocalStorage.ts",
+    "src/App.tsx",
+    "src/components/Dashboard.tsx",
+    "src/types.ts",
+    "src/constants.ts",
+    "src/components/ResetData.tsx",
+    "src/components/ContributionForm.tsx",
+    "src/components/ExpenseForm.tsx",
+    "package.json",
+    "vite.config.ts"
+  ],
+  "directory_structure": "src/ - main app code. src/components/ - React components (Dashboard, forms, lists, etc). src/hooks/ - custom hooks (useLocalStorage, useTheme). src/utils/ - helper functions (formatCurrency). public/ - static assets."
+}
