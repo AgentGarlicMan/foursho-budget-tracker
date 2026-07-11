@@ -1,0 +1,7 @@
+{
+  "task_id": "task-firebase-shared-backend",
+  "task_description": "Replace localStorage with Firebase Realtime Database as the shared backend for the budget tracker app, enabling data persistence across devices. Includes loading/error states and one-time data migration from localStorage.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null
+}
