@@ -1,0 +1,51 @@
+{
+  // Firebase Realtime Database Security Rules for FourSho Budget Tracker
+  //
+  // SECURITY MODEL OVERVIEW:
+  // This app uses a 4-person trusted group model. There is NO Firebase Authentication
+  // implemented -- only a UI-level Admin password gate controls who can write data.
+  // Because of this architectural choice:
+  //   - Reads are open (true) so any viewer can load data without an account.
+  //   - Writes are currently open (true) because there is no server-side identity
+  //     to validate against. The Admin password is enforced purely in the React UI.
+  //
+  // TRADEOFF:
+  // Keeping writes open means anyone who discovers the database URL can modify data
+  // directly (bypassing the UI). For a small trusted group this is acceptable, but
+  // for production hardening you should enable Firebase Authentication and change
+  // the write rules to: ".write": "auth != null"
+  //
+  // HOW TO ADD AUTH GATING LATER:
+  //   1. Enable Firebase Authentication (email/password, Google, or anonymous).
+  //   2. Replace ".write": true with ".write": "auth != null" at the appState level.
+  //   3. Optionally restrict writes to specific UIDs:
+  //      ".write": "auth.uid === 'LEADER_UID_HERE'"
+  //   4. The .validate rules below will still enforce data shape regardless of auth.
+
+  "rules": {
+    // Root-level read access: open so viewers can always load data without accounts.
+    ".read": true,
+
+    // Root-level write: currently open (no auth layer exists).
+    // TODO: Change to "auth != null" once Firebase Authentication is implemented.
+    // ".write": "auth != null",  // <-- Uncomment this when auth is added
+    ".write": true,
+
+    "appState": {
+      "contributions": {
+        // Each contribution is stored as an array element keyed by index ($index).
+        "$index": {
+          ".validate": "newData.hasChildren(['id', 'memberName', 'amount', 'date']) && newData.child('id').isString() && newData.child('memberName').isString() && newData.child('amount').isNumber() && newData.child('date').isString()"
+        }
+      },
+
+      "expenses": {
+        // Each expense is stored as an array element keyed by index ($index).
+        // purchasedBy is optional, so we validate it only if present.
+        "$index": {
+          ".validate": "newData.hasChildren(['id', 'itemName', 'cost', 'date']) && newData.child('id').isString() && newData.child('itemName').isString() && newData.child('cost').isNumber() && newData.child('date').isString() && (!newData.hasChild('purchasedBy') || newData.child('purchasedBy').isString())"
+        }
+      }
+    }
+  }
+}
