@@ -1,0 +1,10 @@
+{
+  "project_type": "React + TypeScript + Vite budget tracker SPA",
+  "language": "TypeScript",
+  "build_system": "Vite with @vitejs/plugin-react and @tailwindcss/vite",
+  "build_command": "npm run build",
+  "test_command": "No test command available",
+  "verification_instructions": "1. Validate database.rules.json is valid JSON. 2. Validate firebase.json references database.rules.json. 3. Attempt firebase deploy --only database.",
+  "setup_instructions": "cd /projects/sandbox/foursho-budget-tracker && npm install",
+  "environment_constraints": "OPEN_INTERNET - full access, can install Firebase CLI"
+}

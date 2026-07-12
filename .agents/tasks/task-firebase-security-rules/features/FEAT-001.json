@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Create Firebase Realtime Database security rules (database.rules.json), firebase.json, and .firebaserc. Attempt deployment via Firebase CLI.",
+  "status": "completed",
+  "steps": [
+    "Create database.rules.json at repo root with security rules including .read true at root, write validation for contributions and expenses, inline comments explaining the security model.",
+    "Create firebase.json that references database.rules.json for database rules.",
+    "Create .firebaserc pointing to the Firebase project (use VITE_FIREBASE_PROJECT_ID fallback 'demo-project').",
+    "Attempt to deploy rules using Firebase CLI (firebase deploy --only database). If auth fails, document that manual deployment is needed.",
+    "Commit all changes to a new branch."
+  ],
+  "acceptance_criteria": [
+    "database.rules.json exists with proper validation rules and inline comments",
+    "firebase.json references database.rules.json",
+    ".firebaserc has the correct project ID",
+    "Rules include .read: true at root for viewers",
+    "Rules include .validate for contributions (memberName string, amount number, date string, id string)",
+    "Rules include .validate for expenses (itemName string, cost number, date string, id string, optional purchasedBy)",
+    "Inline comments explain the open-write tradeoff and how to add auth gating later",
+    "All files committed to a new branch"
+  ],
+  "verification": [
+    "Validate database.rules.json is parseable JSON (comments must use Firebase rules comment syntax)",
+    "Confirm firebase.json and .firebaserc are valid JSON",
+    "Attempt firebase deploy --only database"
+  ],
+  "blocked_reason": null,
+  "findings": "All three files created successfully. firebase.json and .firebaserc are standard JSON. database.rules.json uses Firebase extended JSON with // comments (supported by Firebase CLI). Deployment attempt failed as expected with 'Failed to authenticate, have you run firebase login?' - this is expected in a CI/sandbox environment without Firebase credentials. Files are version-controlled and ready for manual deployment. App build (npm run build) still passes cleanly."
+}
